@@ -1,6 +1,13 @@
+/* src/index.css */
+
 :root {
-  background-color: #181818;
-  color: rgba(255, 255, 255, 0.87);
+  --bg-dark: #181818;
+  --text-dark: rgba(255, 255, 255, 0.87);
+  --bg-light: #f8f8f8;
+  --text-light: #181818;
+
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
   color-scheme: light dark;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-synthesis: none;
@@ -15,7 +22,34 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    background-color: #f8f8f8;
-    color: #181818;
+    background-color: var(--bg-light);
+    color: var(--text-light);
   }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: inherit;
+  color: inherit;
+}
+
+a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(200, 200, 200, 0.1);
 }
