@@ -20,10 +20,10 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<App />} />
-            <Route path="/market" element={<Market />} />
-            <Route path="/trending" element={<Trending />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/" element={<App /> as JSX.Element} />
+            <Route path="/market" element={<Market /> as JSX.Element} />
+            <Route path="/trending" element={<Trending /> as JSX.Element} />
+            <Route path="/leaderboard" element={<Leaderboard /> as JSX.Element} />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>
