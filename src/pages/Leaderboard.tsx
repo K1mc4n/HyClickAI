@@ -8,7 +8,7 @@ interface UserScore {
 }
 
 const fetchLeaderboard = async (): Promise<UserScore[]> => {
-  const res = await axios.get("https://api.example.com/leaderboard"); // Ganti dengan endpoint backend kamu
+  const res = await axios.get("https://api.example.com/leaderboard");
   return res.data;
 };
 
@@ -20,6 +20,7 @@ export default function Leaderboard() {
 
   if (isLoading) return <div className="p-4">Loading leaderboard...</div>;
   if (error) return <div className="p-4 text-red-500">Failed to load leaderboard</div>;
+  if (!data) return <div className="p-4 text-gray-500">No leaderboard data.</div>;
 
   return (
     <div className="p-4">
@@ -50,4 +51,3 @@ export default function Leaderboard() {
     </div>
   );
 }
-
