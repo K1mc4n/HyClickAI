@@ -4,34 +4,49 @@ import { useEffect } from "react";
 import { useAccount, useConnect, useSignMessage } from "wagmi";
 import { Link } from "react-router-dom";
 
-function App() {
+export default function App() {
   useEffect(() => {
     sdk.actions.ready();
   }, []);
 
   return (
-    <div className="p-4 space-y-4">
-      <h1 className="text-2xl font-bold">Farcaster Mini App</h1>
-      <nav className="space-x-4">
-        <Link to="/market" className="text-blue-500 underline">Market</Link>
-        <Link to="/trending" className="text-blue-500 underline">Trending</Link>
-        <Link to="/leaderboard" className="text-blue-500 underline">Leaderboard</Link>
-      </nav>
-      <ConnectMenu />
+    <div className="p-6 space-y-6">
+      <h1 className="text-3xl font-bold">HyClickAI MiniApp</h1>
+      <p className="text-gray-600">Silakan pilih fitur:</p>
+      <ul className="space-y-2">
+        <li>
+          <Link to="/market" className="text-blue-500 underline">
+            📊 Market Viewers
+          </Link>
+        </li>
+        <li>
+          <Link to="/trending" className="text-blue-500 underline">
+            🔥 Trending Casts
+          </Link>
+        </li>
+        <li>
+          <Link to="/leaderboard" className="text-blue-500 underline">
+            🏆 Leaderboard Rewards
+          </Link>
+        </li>
+      </ul>
+
+      <hr className="my-4 border-gray-300" />
+      <ConnectWallet />
     </div>
   );
 }
 
-function ConnectMenu() {
+function ConnectWallet() {
   const { isConnected, address } = useAccount();
   const { connect, connectors } = useConnect();
 
   if (isConnected) {
     return (
-      <>
-        <div className="text-green-600">Connected account: {address}</div>
-        <SignButton />
-      </>
+      <div>
+        <div className="text-green-600">✅ Connected: {address}</div>
+        <SignMessageButton />
+      </div>
     );
   }
 
@@ -46,7 +61,7 @@ function ConnectMenu() {
   );
 }
 
-function SignButton() {
+function SignMessageButton() {
   const { signMessage, isPending, data, error } = useSignMessage();
 
   return (
@@ -57,22 +72,14 @@ function SignButton() {
         onClick={() => signMessage({ message: "hello world" })}
         disabled={isPending}
       >
-        {isPending ? "Signing..." : "Sign message"}
+        {isPending ? "Signing..." : "Sign Message"}
       </button>
       {data && (
-        <div className="text-sm text-gray-700">
-          <div>Signature:</div>
-          <div className="break-all">{data}</div>
+        <div className="text-sm break-words text-gray-700">
+          ✅ Signature: <span className="break-all">{data}</span>
         </div>
       )}
-      {error && (
-        <div className="text-sm text-red-600">
-          <div>Error:</div>
-          <div>{error.message}</div>
-        </div>
-      )}
+      {error && <div className="text-sm text-red-600">❌ {error.message}</div>}
     </div>
   );
 }
-
-export default App;
