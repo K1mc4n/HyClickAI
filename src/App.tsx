@@ -11,7 +11,7 @@ export default function App() {
   return (
     <main className="container">
       <header className="header">
-        <h1>HyClickAI MiniApp</h1>
+        <h1>Farcaster Portal</h1>
         <p>Silakan pilih fitur di bawah ini:</p>
       </header>
 
