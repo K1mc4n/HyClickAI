@@ -29,7 +29,7 @@ export default function Market() {
   if (isLoading) return <div className="p-4">Loading market data...</div>;
   if (error) return <div className="p-4 text-red-500">Error fetching data</div>;
 
-  const filteredData = data.filter((coin) =>
+  const filteredData = data.filter((coin: any) =>
     coin.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -54,7 +54,7 @@ export default function Market() {
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((coin) => (
+          {filteredData.map((coin: any) => (
             <tr key={coin.id} className="hover:bg-gray-50">
               <td className="border-b p-2 flex items-center gap-2 max-w-[120px]">
                 <img
