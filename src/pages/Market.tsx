@@ -9,7 +9,7 @@ const fetchMarketData = async () => {
       params: {
         vs_currency: "usd",
         order: "market_cap_desc",
-        per_page: 10,
+        per_page: 250, // tampilkan 250 coin
         page: 1,
         sparkline: false,
       },
@@ -35,28 +35,28 @@ export default function Market() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-2">Top 10 Crypto Markets</h1>
+      <h1 className="text-xl font-semibold mb-2">Top 250 Crypto Markets</h1>
 
       <input
         type="text"
         placeholder="Search coin..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="mb-4 p-2 border border-gray-300 rounded w-full"
+        className="mb-4 p-2 text-sm border border-gray-300 rounded w-full"
       />
 
-      <table className="w-full text-left border-collapse">
+      <table className="w-full text-left border-collapse text-sm">
         <thead>
           <tr>
-            <th className="border-b p-2">Name</th>
-            <th className="border-b p-2">Price</th>
-            <th className="border-b p-2">Change 24h</th>
+            <th className="border-b p-1">Name</th>
+            <th className="border-b p-1">Price</th>
+            <th className="border-b p-1">Change 24h</th>
           </tr>
         </thead>
         <tbody>
           {filteredData.map((coin: any) => (
             <tr key={coin.id} className="hover:bg-gray-50">
-              <td className="border-b p-2 flex items-center gap-2 max-w-[120px]">
+              <td className="border-b p-1 flex items-center gap-2 max-w-[120px] truncate">
                 <img
                   src={coin.image}
                   alt={coin.name}
@@ -64,9 +64,9 @@ export default function Market() {
                 />
                 {coin.name}
               </td>
-              <td className="border-b p-2">${coin.current_price.toLocaleString()}</td>
+              <td className="border-b p-1">${coin.current_price.toLocaleString()}</td>
               <td
-                className={`border-b p-2 ${
+                className={`border-b p-1 ${
                   coin.price_change_percentage_24h >= 0
                     ? "text-green-600"
                     : "text-red-600"
