@@ -10,16 +10,23 @@ interface Winner {
   walletAddress: string;
 }
 
-// Fetcher untuk ambil data
+// Fetcher untuk ambil data langsung dari API Farcaster
 async function fetchRewards(
   endpoint: "developer" | "creator",
   periodsAgo: number
 ): Promise<Winner[]> {
-  const resp = await fetch(`/api/${endpoint}-rewards?periodsAgo=${periodsAgo}`);
+  const apiUrl =
+    endpoint === "creator"
+      ? `https://api.farcaster.xyz/v1/creator-rewards-winner-history?periodsAgo=${periodsAgo}`
+      : `https://api.farcaster.xyz/v1/developer-rewards-winner-history?periodsAgo=${periodsAgo}`;
+
+  const resp = await fetch(apiUrl);
   if (!resp.ok) {
     throw new Error(`Error ${resp.status}: ${resp.statusText}`);
   }
-  return resp.json();
+
+  const json = await resp.json();
+  return json.result.winners; // Ambil winners langsung
 }
 
 export default function Trending() {
@@ -53,7 +60,7 @@ export default function Trending() {
 
   return (
     <div className="p-4 space-y-8">
-      {/* Dropdown PeriodsAgo */}
+      {/* Dropdown periods */}
       <div className="flex items-center space-x-2">
         <label htmlFor="periodsAgo" className="font-medium">
           Show data from period:
@@ -73,10 +80,7 @@ export default function Trending() {
       {/* Error */}
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg flex items-center space-x-2">
-          <svg className="w-5 h-5 flex-none" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M4.293 19.707A8.978 8.978 0 0112 3a8.978 8.978 0 017.707 16.707L12 12l-7.7077.707z" />
-          </svg>
-          <span>{error}</span>
+          ⚠️ <span>{error}</span>
         </div>
       )}
 
