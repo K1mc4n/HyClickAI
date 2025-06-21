@@ -2,24 +2,27 @@ import { useEffect, useState } from "react";
 
 interface Winner {
   fid: number;
-  frameName?: string;
-  domain?: string;
   score: number;
   rank: number;
   rewardCents: number;
   walletAddress: string;
 }
 
-// Fetcher untuk ambil data
+// Fetcher untuk ambil data langsung dari Farcaster API
 async function fetchRewards(
   endpoint: "developer" | "creator",
   periodsAgo: number
 ): Promise<Winner[]> {
-  const resp = await fetch(`/api/${endpoint}-rewards?periodsAgo=${periodsAgo}`);
+  const resp = await fetch(
+    `https://api.farcaster.xyz/v1/${endpoint}-rewards-winner-history?periodsAgo=${periodsAgo}`
+  );
+
   if (!resp.ok) {
     throw new Error(`Error ${resp.status}: ${resp.statusText}`);
   }
-  return resp.json();
+
+  const data = await resp.json();
+  return data.result.winners; // Ambil array winners
 }
 
 export default function Trending() {
@@ -30,14 +33,16 @@ export default function Trending() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    (async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
+
         const [dev, creators] = await Promise.all([
           fetchRewards("developer", periodsAgo),
           fetchRewards("creator", periodsAgo),
         ]);
+
         setDevWinners(dev);
         setCreatorWinners(creators);
       } catch (err: any) {
@@ -45,12 +50,13 @@ export default function Trending() {
       } finally {
         setLoading(false);
       }
-    })();
+    };
+    fetchData();
   }, [periodsAgo]);
 
   return (
     <div className="p-4 space-y-8">
-      {/* PeriodsAgo */}
+      {/* Dropdown PeriodsAgo */}
       <div className="flex items-center space-x-2">
         <label htmlFor="periodsAgo" className="font-medium">
           Show data from period:
@@ -68,10 +74,17 @@ export default function Trending() {
       </div>
 
       {/* Error */}
-      {error && <div className="bg-red-100 border border-red-400 p-4 rounded">{error}</div>}
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg flex items-center space-x-2">
+          <svg className="w-5 h-5 flex-none" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M4.293 19.707A8.978 8.978 0 0112 3a8.978 8.978 0 017.707 16.707L12 12l-7.7077.707z" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
 
       {/* Loading */}
-      {loading && <p>Loading rewards data…</p>}
+      {loading && <p className="text-center text-gray-500">Loading rewards data…</p>}
 
       {/* Developer Rewards */}
       {!loading && !error && (
@@ -79,35 +92,46 @@ export default function Trending() {
           <section>
             <h1 className="text-2xl font-bold mb-4">🏆 Top Developer Rewards</h1>
             {devWinners.length === 0 ? (
-              <p>No developer rewards available.</p>
+              <p className="text-gray-500">No developer rewards available.</p>
             ) : (
               <ul className="space-y-3">
                 {devWinners.map((w) => (
-                  <li key={`dev-${w.fid}`} className="border p-3 rounded flex justify-between">
+                  <li
+                    key={`dev-${w.fid}`}
+                    className="border p-3 rounded-lg flex justify-between items-center"
+                  >
                     <div>
-                      <p>{w.frameName || w.domain}</p>
-                      <p>FID: {w.fid} • Rank: {w.rank}</p>
+                      <p className="font-medium">FID: {w.fid}</p>
+                      <p className="text-xs text-gray-500">Rank: {w.rank} • Score: {w.score}</p>
                     </div>
-                    <span>${(w.rewardCents / 100).toFixed(2)}</span>
+                    <span className="text-green-600 font-semibold">
+                      ${(w.rewardCents / 100).toFixed(2)}
+                    </span>
                   </li>
                 ))}
               </ul>
             )}
           </section>
 
+          {/* Creator Rewards */}
           <section>
             <h1 className="text-2xl font-bold mb-4">🏅 Top Creator Rewards</h1>
             {creatorWinners.length === 0 ? (
-              <p>No creator rewards available.</p>
+              <p className="text-gray-500">No creator rewards available.</p>
             ) : (
               <ul className="space-y-3">
                 {creatorWinners.map((w) => (
-                  <li key={`creator-${w.fid}`} className="border p-3 rounded flex justify-between">
+                  <li
+                    key={`creator-${w.fid}`}
+                    className="border p-3 rounded-lg flex justify-between items-center"
+                  >
                     <div>
-                      <p>{w.frameName || w.domain}</p>
-                      <p>FID: {w.fid} • Rank: {w.rank}</p>
+                      <p className="font-medium">FID: {w.fid}</p>
+                      <p className="text-xs text-gray-500">Rank: {w.rank} • Score: {w.score}</p>
                     </div>
-                    <span>${(w.rewardCents / 100).toFixed(2)}</span>
+                    <span className="text-blue-600 font-semibold">
+                      ${(w.rewardCents / 100).toFixed(2)}
+                    </span>
                   </li>
                 ))}
               </ul>
