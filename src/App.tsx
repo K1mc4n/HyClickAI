@@ -12,7 +12,7 @@ export default function App() {
     <main className="container">
       <header className="header">
         <h1>Farcaster Portal</h1>
-        <p>Silakan pilih fitur di bawah ini:</p>
+        <p>Please select a feature below:</p>
       </header>
 
       <section className="features">
