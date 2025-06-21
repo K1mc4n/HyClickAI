@@ -16,15 +16,14 @@ export default function Trending() {
 
   useEffect(() => {
     const fetchDuneData = async () => {
-      const dune = new DuneClient(import.meta.env.VITE_DUNE_API_KEY); // pastikan VITE_DUNE_API_KEY ada di .env.local
-
+      const dune = new DuneClient(import.meta.env.VITE_DUNE_API_KEY); // API key dari .env.local
       try {
-        const res = await dune.getLatestResult({ queryId: 3023113 });
-
-        // ✅ Tambahkan log debug
-        console.log("✅ Dune Response:", res.result);
+        const res = await dune.getLatestResult({ queryId: 5324112 }); // ✅ GANTI ID di sini
         const rows = res.result?.rows || [];
-        console.log("📦 Parsed Rows:", rows);
+
+        // ✅ DEBUG LOG
+        console.log("✅ Dune Response:", res.result);
+        console.log("📦 Parsed Rows:", rows.slice(0, 3)); // tampilkan 3 data pertama
 
         const parsed = rows.map((row: any) => {
           const username = row.username
@@ -56,6 +55,7 @@ export default function Trending() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">🔥 Top Farcaster Users (by Reactions)</h1>
+
       {users.length === 0 ? (
         <p className="text-gray-500">No data available from Dune.</p>
       ) : (
