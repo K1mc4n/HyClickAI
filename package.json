@@ -31,5 +31,8 @@
     "@wagmi/cli": "latest",
     "typescript": "^5.4.5",
     "vite": "^5.2.11"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
