@@ -17,7 +17,7 @@ export default function App() {
 
       <section className="features">
         <FeatureCard title="📊 Market Viewers" to="/market" />
-        <FeatureCard title="🔥 Trending Casts" to="/trending" />
+        <FeatureCard title="🔥 Popular Farcaster users" to="/trending" />
         <FeatureCard title="🏆 Leaderboard Rewards" to="/leaderboard" />
       </section>
 
