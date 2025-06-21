@@ -1,7 +1,8 @@
 import { sdk } from "@farcaster/frame-sdk";
 import { useEffect } from "react";
 import { useAccount, useConnect, useSignMessage } from "wagmi";
-import { Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import Trending from "./pages/Trending"; // pastikan path ini sesuai
 
 export default function App() {
   useEffect(() => {
@@ -9,22 +10,32 @@ export default function App() {
   }, []);
 
   return (
-    <main className="container">
-      <header className="header">
-        <h1>Farcaster Portal</h1>
-        <p>Please select a feature below:</p>
-      </header>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <main className="container">
+              <header className="header">
+                <h1>Farcaster Portal</h1>
+                <p>Please select a feature below:</p>
+              </header>
 
-      <section className="features">
-        <FeatureCard title="📊 Market Viewers" to="/market" />
-        <FeatureCard title="🔥 Popular Farcaster users" to="/trending" />
-        <FeatureCard title="🏆 Leaderboard Rewards" to="/leaderboard" />
-      </section>
+              <section className="features">
+                <FeatureCard title="📊 Market Viewers" to="/market" />
+                <FeatureCard title="🔥 Popular Farcaster users" to="/trending" />
+                <FeatureCard title="🏆 Leaderboard Rewards" to="/leaderboard" />
+              </section>
 
-      <section className="wallet">
-        <ConnectWallet />
-      </section>
-    </main>
+              <section className="wallet">
+                <ConnectWallet />
+              </section>
+            </main>
+          }
+        />
+        <Route path="/trending" element={<Trending />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
