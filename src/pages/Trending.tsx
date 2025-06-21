@@ -10,23 +10,16 @@ interface Winner {
   walletAddress: string;
 }
 
-// Fetcher untuk ambil data langsung dari API Farcaster
+// Fetcher untuk ambil data
 async function fetchRewards(
   endpoint: "developer" | "creator",
   periodsAgo: number
 ): Promise<Winner[]> {
-  const apiUrl =
-    endpoint === "creator"
-      ? `https://api.farcaster.xyz/v1/creator-rewards-winner-history?periodsAgo=${periodsAgo}`
-      : `https://api.farcaster.xyz/v1/developer-rewards-winner-history?periodsAgo=${periodsAgo}`;
-
-  const resp = await fetch(apiUrl);
+  const resp = await fetch(`/api/${endpoint}-rewards?periodsAgo=${periodsAgo}`);
   if (!resp.ok) {
     throw new Error(`Error ${resp.status}: ${resp.statusText}`);
   }
-
-  const json = await resp.json();
-  return json.result.winners; // Ambil winners langsung
+  return resp.json();
 }
 
 export default function Trending() {
@@ -37,16 +30,14 @@ export default function Trending() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       try {
         setLoading(true);
         setError(null);
-
         const [dev, creators] = await Promise.all([
           fetchRewards("developer", periodsAgo),
           fetchRewards("creator", periodsAgo),
         ]);
-
         setDevWinners(dev);
         setCreatorWinners(creators);
       } catch (err: any) {
@@ -54,13 +45,12 @@ export default function Trending() {
       } finally {
         setLoading(false);
       }
-    };
-    fetchData();
+    })();
   }, [periodsAgo]);
 
   return (
     <div className="p-4 space-y-8">
-      {/* Dropdown periods */}
+      {/* PeriodsAgo */}
       <div className="flex items-center space-x-2">
         <label htmlFor="periodsAgo" className="font-medium">
           Show data from period:
@@ -78,14 +68,10 @@ export default function Trending() {
       </div>
 
       {/* Error */}
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg flex items-center space-x-2">
-          ⚠️ <span>{error}</span>
-        </div>
-      )}
+      {error && <div className="bg-red-100 border border-red-400 p-4 rounded">{error}</div>}
 
       {/* Loading */}
-      {loading && <p className="text-center text-gray-500">Loading rewards data…</p>}
+      {loading && <p>Loading rewards data…</p>}
 
       {/* Developer Rewards */}
       {!loading && !error && (
@@ -93,36 +79,35 @@ export default function Trending() {
           <section>
             <h1 className="text-2xl font-bold mb-4">🏆 Top Developer Rewards</h1>
             {devWinners.length === 0 ? (
-              <p className="text-gray-500">No developer rewards available.</p>
+              <p>No developer rewards available.</p>
             ) : (
               <ul className="space-y-3">
                 {devWinners.map((w) => (
-                  <li key={`dev-${w.fid}`} className="border p-3 rounded-lg flex justify-between items-center">
+                  <li key={`dev-${w.fid}`} className="border p-3 rounded flex justify-between">
                     <div>
-                      <p className="font-medium">{w.frameName || w.domain}</p>
-                      <p className="text-xs text-gray-500">FID: {w.fid} • Rank: {w.rank}</p>
+                      <p>{w.frameName || w.domain}</p>
+                      <p>FID: {w.fid} • Rank: {w.rank}</p>
                     </div>
-                    <span className="text-green-600 font-semibold">${(w.rewardCents / 100).toFixed(2)}</span>
+                    <span>${(w.rewardCents / 100).toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
             )}
           </section>
 
-          {/* Creator Rewards */}
           <section>
             <h1 className="text-2xl font-bold mb-4">🏅 Top Creator Rewards</h1>
             {creatorWinners.length === 0 ? (
-              <p className="text-gray-500">No creator rewards available.</p>
+              <p>No creator rewards available.</p>
             ) : (
               <ul className="space-y-3">
                 {creatorWinners.map((w) => (
-                  <li key={`creator-${w.fid}`} className="border p-3 rounded-lg flex justify-between items-center">
+                  <li key={`creator-${w.fid}`} className="border p-3 rounded flex justify-between">
                     <div>
-                      <p className="font-medium">{w.frameName || w.domain}</p>
-                      <p className="text-xs text-gray-500">FID: {w.fid} • Rank: {w.rank}</p>
+                      <p>{w.frameName || w.domain}</p>
+                      <p>FID: {w.fid} • Rank: {w.rank}</p>
                     </div>
-                    <span className="text-blue-600 font-semibold">${(w.rewardCents / 100).toFixed(2)}</span>
+                    <span>${(w.rewardCents / 100).toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
