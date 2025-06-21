@@ -10,11 +10,16 @@ interface Winner {
   walletAddress: string;
 }
 
-async function fetchRewards(endpoint: string, periodsAgo: number): Promise<Winner[]> {
-  const resp = await fetch(`https://api.farcaster.xyz/v1/${endpoint}?periodsAgo=${periodsAgo}`);
-  if (!resp.ok) throw new Error(`Error ${resp.status}: ${resp.statusText}`);
-  const json = await resp.json();
-  return json.result.winners ?? [];
+// Helper fetcher untuk developer/creator rewards
+async function fetchRewards(
+  endpoint: "developer" | "creator",
+  periodsAgo: number
+): Promise<Winner[]> {
+  const resp = await fetch(`/api/${endpoint}-rewards?periodsAgo=${periodsAgo}`);
+  if (!resp.ok) {
+    throw new Error(`Error ${resp.status}: ${resp.statusText}`);
+  }
+  return resp.json();
 }
 
 export default function Trending() {
@@ -31,8 +36,8 @@ export default function Trending() {
         setError(null);
 
         const [dev, creators] = await Promise.all([
-          fetchRewards("developer-rewards-winner-history", periodsAgo),
-          fetchRewards("creator-rewards-winner-history", periodsAgo),
+          fetchRewards("developer", periodsAgo),
+          fetchRewards("creator", periodsAgo),
         ]);
 
         setDevWinners(dev);
@@ -48,9 +53,11 @@ export default function Trending() {
 
   return (
     <div className="p-4 space-y-8">
-      {/* PeriodsAgo Selector */}
+      {/* PeriodsAgo selector */}
       <div className="flex items-center space-x-2">
-        <label htmlFor="periodsAgo" className="font-medium">Show data from period:</label>
+        <label htmlFor="periodsAgo" className="font-medium">
+          Show data from period:
+        </label>
         <select
           id="periodsAgo"
           value={periodsAgo}
@@ -58,7 +65,9 @@ export default function Trending() {
           className="border rounded-md p-2"
         >
           {[0, 1, 2, 3, 4].map((p) => (
-            <option key={p} value={p}>{p === 0 ? "Current period" : `${p} period ago`}</option>
+            <option key={p} value={p}>
+              {p === 0 ? "Current period" : `${p} period ago`}
+            </option>
           ))}
         </select>
       </div>
@@ -73,12 +82,17 @@ export default function Trending() {
             strokeWidth={2}
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M4.293 19.707A8.978 8.978 0 0112 3a8.978 8.978 0 017.707 16.707L12 12l-7.7077.707z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v2m0 4h.01M4.293 19.707A8.978 8.978 0 0112 3a8.978 8.978 0 017.707 16.707L12 12l-7.7077.707z"
+            />
           </svg>
           <span>{error}</span>
         </div>
       )}
 
+      {/* Loading */}
       {loading && <p className="text-center text-gray-500">Loading rewards data…</p>}
 
       {/* Developer Rewards */}
@@ -91,10 +105,15 @@ export default function Trending() {
             ) : (
               <ul className="space-y-3">
                 {devWinners.map((w) => (
-                  <li key={`dev-${w.fid}`} className="border p-3 rounded-lg flex justify-between items-center">
+                  <li
+                    key={`dev-${w.fid}`}
+                    className="border p-3 rounded-lg flex justify-between items-center"
+                  >
                     <div>
                       <p className="font-medium">{w.frameName || w.domain}</p>
-                      <p className="text-xs text-gray-500">FID: {w.fid} • Rank: {w.rank}</p>
+                      <p className="text-xs text-gray-500">
+                        FID: {w.fid} • Rank: {w.rank}
+                      </p>
                     </div>
                     <span className="text-green-600 font-semibold">
                       ${(w.rewardCents / 100).toFixed(2)}
@@ -113,10 +132,15 @@ export default function Trending() {
             ) : (
               <ul className="space-y-3">
                 {creatorWinners.map((w) => (
-                  <li key={`creator-${w.fid}`} className="border p-3 rounded-lg flex justify-between items-center">
+                  <li
+                    key={`creator-${w.fid}`}
+                    className="border p-3 rounded-lg flex justify-between items-center"
+                  >
                     <div>
                       <p className="font-medium">{w.frameName || w.domain}</p>
-                      <p className="text-xs text-gray-500">FID: {w.fid} • Rank: {w.rank}</p>
+                      <p className="text-xs text-gray-500">
+                        FID: {w.fid} • Rank: {w.rank}
+                      </p>
                     </div>
                     <span className="text-blue-600 font-semibold">
                       ${(w.rewardCents / 100).toFixed(2)}
