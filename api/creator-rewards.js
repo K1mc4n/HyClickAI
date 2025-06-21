@@ -1,20 +1,15 @@
 // api/creator-rewards.js
-const fetch = require('node-fetch');
-
+const fetch = require('node-fetch'); // untuk node
 module.exports = async (req, res) => {
   try {
-    const periodsAgo = req.query.periodsAgo || "0";
-    const resp = await fetch(
-      `https://api.farcaster.xyz/v1/creator-rewards-winner-history?periodsAgo=${periodsAgo}`
-    );
-
+    const periodsAgo = req.query.periodsAgo || 0;
+    const resp = await fetch(`https://api.farcaster.xyz/v1/creator-rewards-winner-history?periodsAgo=${periodsAgo}`)
     if (!resp.ok) {
-      return res.status(resp.status).send(`Error ${resp.statusText}`);
+      return res.status(resp.status).send(await resp.text())
     }
-
-    const data = await resp.json();
-    res.status(200).json(data.result.winners || []);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    const json = await resp.json();
+    return res.status(200).json(json.result.winners)
+  } catch (e) {
+    return res.status(500).send(e.message)
   }
 };
