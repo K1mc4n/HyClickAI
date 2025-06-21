@@ -1,12 +1,19 @@
-import fetch from "node-fetch";
-
-export default async function handler(req: any, res: any) {
-  const periodsAgo = req.query.periodsAgo || 0;
+// api/developer-rewards.js
+export default async function handler(req, res) {
   try {
-    const resp = await fetch(`https://api.farcaster.xyz/v1/developer-rewards-winner-history?periodsAgo=${periodsAgo}`);
+    const { periodsAgo } = req.query;
+    const url = `https://api.farcaster.xyz/v1/developer-rewards-winner-history${
+      periodsAgo ? `?periodsAgo=${periodsAgo}` : ""
+    }`;
+    const resp = await fetch(url);
+    if (!resp.ok) {
+      return res.status(resp.status).json({ error: resp.statusText });
+    }
     const data = await resp.json();
-    res.status(200).json(data.result.winners); // ambil winners
+    // ✅ Add CORS header
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.status(200).json(data.result.winners || []);
   } catch (error) {
-    res.status(500).json({ error: "Error fetching developer rewards" });
+    res.status(500).json({ error: error.message });
   }
 }
