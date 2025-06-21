@@ -16,18 +16,16 @@ export default function Trending() {
 
   useEffect(() => {
     const fetchDuneData = async () => {
-      const dune = new DuneClient(import.meta.env.VITE_DUNE_API_KEY); // API key dari .env.local
+      const dune = new DuneClient(import.meta.env.VITE_DUNE_API_KEY);
       try {
-        const res = await dune.getLatestResult({ queryId: 5324112 }); // ✅ GANTI ID di sini
+        const res = await dune.getLatestResult({ queryId: 5324112 });
         const rows = res.result?.rows || [];
 
-        // ✅ DEBUG LOG
-        console.log("✅ Dune Response:", res.result);
-        console.log("📦 Parsed Rows:", rows.slice(0, 3)); // tampilkan 3 data pertama
+        console.log("✅ FULL DUNE ROWS:", rows.slice(0, 3)); // tampilkan 3 teratas untuk cek
 
         const parsed = rows.map((row: any) => {
-          const username = row.username
-            ?.match(/>(.*?)<\/a>/)?.[1] ?? "unknown"; // extract dari HTML <a>
+          // Ambil username dari tag <a>
+          const username = row.username?.match(/>(.*?)<\/a>/)?.[1] ?? "unknown";
 
           return {
             fid: row.fid,
@@ -41,7 +39,7 @@ export default function Trending() {
 
         setUsers(parsed);
       } catch (err) {
-        console.error("❌ Error fetching Dune data:", err);
+        console.error("❌ Error fetching from Dune:", err);
       } finally {
         setLoading(false);
       }
@@ -66,7 +64,7 @@ export default function Trending() {
               <div className="text-md mt-1">💬 Total Casts: {user.totalCasts}</div>
               <div className="text-md">❤️ Reactions: {user.reactions}</div>
               <div className="text-sm text-gray-600 mt-1">
-                Ratio: {(user.ratio).toFixed(2)} | FIP2: {(user.fip2Ratio).toFixed(2)}
+                Ratio: {user.ratio.toFixed(2)} | FIP2: {user.fip2Ratio.toFixed(2)}
               </div>
             </li>
           ))}
