@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@duneanalytics/client-sdk": "^0.2.5",
     "@farcaster/frame-sdk": "latest",
     "@farcaster/frame-wagmi-connector": "latest",
     "@tanstack/react-query": "5.45.1",
