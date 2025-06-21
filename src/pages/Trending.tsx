@@ -1,59 +1,64 @@
-// src/pages/Trending.tsx
 import { useEffect, useState } from "react";
+import { DuneClient } from "@duneanalytics/client-sdk";
 
-interface Cast {
-  hash: string;
-  text: string;
-  author: {
-    username: string;
-  };
+interface TrendingUser {
+  fid: number;
+  username: string;
   reactions: number;
-  recasts: number;
+  totalCasts: number;
+  ratio: number;
+  fip2Ratio: number;
 }
 
-// Dummy data simulating trending casts
-const dummyCasts: Cast[] = [
-  {
-    hash: "0xabc1",
-    text: "What are your thoughts on ETH 2.0?",
-    author: { username: "alice" },
-    reactions: 42,
-    recasts: 17,
-  },
-  {
-    hash: "0xabc2",
-    text: "New governance proposal is live!",
-    author: { username: "bob" },
-    reactions: 35,
-    recasts: 22,
-  },
-  {
-    hash: "0xabc3",
-    text: "Loving the new Frames integration ✨",
-    author: { username: "carol" },
-    reactions: 28,
-    recasts: 15,
-  },
-];
-
 export default function Trending() {
-  const [casts, setCasts] = useState<Cast[]>([]);
+  const [users, setUsers] = useState<TrendingUser[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Replace with actual API call if available
-    setCasts(dummyCasts);
+    const fetchDuneData = async () => {
+      const dune = new DuneClient(import.meta.env.VITE_DUNE_API_KEY); // .env
+      try {
+        const res = await dune.getLatestResult({ queryId: 3023113 });
+        const rows = res.result?.rows || [];
+
+        const parsed = rows.map((row: any) => {
+          const username = row.username
+            ?.match(/>(.*?)<\/a>/)?.[1] ?? "unknown"; // extract text from <a>...</a>
+
+          return {
+            fid: row.fid,
+            username,
+            reactions: row.reactions_received ?? 0,
+            totalCasts: row.total_casts ?? 0,
+            ratio: row.reaction_cast_ratio ?? 0,
+            fip2Ratio: row["top-level_fip2_ratio"] ?? 0,
+          };
+        });
+
+        setUsers(parsed);
+      } catch (err) {
+        console.error("Error fetching Dune data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDuneData();
   }, []);
+
+  if (loading) return <p className="p-4">Loading from Dune...</p>;
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">🔥 Trending Casts</h1>
+      <h1 className="text-2xl font-bold mb-4">🔥 Top Farcaster Users (by Reactions)</h1>
       <ul className="space-y-4">
-        {casts.map((cast) => (
-          <li key={cast.hash} className="border p-4 rounded-lg shadow-sm">
-            <div className="text-sm text-gray-500">@{cast.author.username}</div>
-            <div className="text-lg font-medium mt-1">{cast.text}</div>
-            <div className="text-sm mt-2 text-gray-600">
-              ❤️ {cast.reactions} &nbsp; 🔁 {cast.recasts}
+        {users.map((user) => (
+          <li key={user.fid} className="border p-4 rounded-lg shadow-sm">
+            <div className="text-sm text-gray-500">@{user.username}</div>
+            <div className="text-md mt-1">💬 Total Casts: {user.totalCasts}</div>
+            <div className="text-md">❤️ Reactions: {user.reactions}</div>
+            <div className="text-sm text-gray-600 mt-1">
+              Ratio: {(user.ratio).toFixed(2)} | FIP2: {(user.fip2Ratio).toFixed(2)}
             </div>
           </li>
         ))}
@@ -61,4 +66,3 @@ export default function Trending() {
     </div>
   );
 }
-
