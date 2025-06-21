@@ -1,21 +1,12 @@
-// api/developer-rewards.js
-const fetch = require('node-fetch');
+import fetch from "node-fetch";
 
-module.exports = async (req, res) => {
+export default async function handler(req: any, res: any) {
   const periodsAgo = req.query.periodsAgo || 0;
-
   try {
-    const resp = await fetch(
-      `https://api.farcaster.xyz/v1/developer-rewards-winner-history?periodsAgo=${periodsAgo}`
-    );
-
-    if (!resp.ok) {
-      return res.status(resp.status).send(await resp.text());
-    }
-
-    const json = await resp.json();
-    return res.status(200).json(json.result.winners); // hanya bagian winners
+    const resp = await fetch(`https://api.farcaster.xyz/v1/developer-rewards-winner-history?periodsAgo=${periodsAgo}`);
+    const data = await resp.json();
+    res.status(200).json(data.result.winners); // ambil winners
   } catch (error) {
-    return res.status(500).send(error.message || "Error fetching data");
+    res.status(500).json({ error: "Error fetching developer rewards" });
   }
-};
+}
