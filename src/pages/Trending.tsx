@@ -10,7 +10,7 @@ interface Winner {
   walletAddress: string;
 }
 
-// Helper fetcher untuk developer/creator rewards
+// Fetcher untuk ambil data
 async function fetchRewards(
   endpoint: "developer" | "creator",
   periodsAgo: number
@@ -43,7 +43,7 @@ export default function Trending() {
         setDevWinners(dev);
         setCreatorWinners(creators);
       } catch (err: any) {
-        setError(err.message ?? "Unknown error occurred");
+        setError(err.message || "Unknown error occurred");
       } finally {
         setLoading(false);
       }
@@ -53,7 +53,7 @@ export default function Trending() {
 
   return (
     <div className="p-4 space-y-8">
-      {/* PeriodsAgo selector */}
+      {/* Dropdown PeriodsAgo */}
       <div className="flex items-center space-x-2">
         <label htmlFor="periodsAgo" className="font-medium">
           Show data from period:
