@@ -14,7 +14,12 @@ async function fetchRewards(
   periodsAgo: number
 ): Promise<Winner[]> {
   const resp = await fetch(
-    `https://api.farcaster.xyz/v1/${endpoint}-rewards-winner-history?periodsAgo=${periodsAgo}`
+    `/v1/${endpoint}-rewards-winner-history?periodsAgo=${periodsAgo}`, 
+    {
+      headers: {
+        'Authorization': `Bearer ${import.meta.env.VITE_FARCASTER_API_KEY}`,
+      },
+    }
   );
 
   if (!resp.ok) {
@@ -22,7 +27,7 @@ async function fetchRewards(
   }
 
   const data = await resp.json();
-  return data.result.winners; // Ambil array winners
+  return data.result.winners; 
 }
 
 export default function Trending() {
