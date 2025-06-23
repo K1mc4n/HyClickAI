@@ -1,32 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { WagmiProvider } from "wagmi";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import App from "./App";
-import Market from "./pages/Market";
-import Trending from "./pages/Trending";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { WagmiConfig, createConfig, configureChains } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
+import { mainnet } from "viem/chains";
 import Leaderboard from "./pages/Leaderboard";
-import { config } from "./wagmi";
 
-import "./index.css";
+const { publicClient } = configureChains([mainnet], [publicProvider()]);
+const config = createConfig({ autoConnect: true, publicClient });
 
-const queryClient = new QueryClient();
-
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<App />} />
-            <Route path="/market" element={<Market />} />
-            <Route path="/trending" element={<Trending />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-          </Routes>
-        </BrowserRouter>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <WagmiConfig config={config}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+        </Routes>
+      </BrowserRouter>
+    </WagmiConfig>
   </React.StrictMode>
 );
