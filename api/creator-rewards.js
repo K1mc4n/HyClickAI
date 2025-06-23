@@ -1,21 +1,22 @@
-// api/creator-rewards.js
 export default async function handler(req, res) {
-  const { periodsAgo } = req.query;
-  const url = `https://api.farcaster.xyz/v1/creator-rewards-winner-history${periodsAgo ? `?periodsAgo=${periodsAgo}` : ''}`;
+  const url = "https://api.farcaster.xyz/v1/creator-rewards-winner-history";
 
   try {
-    const resp = await fetch(url);
-    const contentType = resp.headers.get("content-type");
+    const response = await fetch(url);
+    const contentType = response.headers.get("content-type");
 
-    if (!resp.ok || !contentType.includes("application/json")) {
-      const text = await resp.text();
-      return res.status(500).json({ error: "Invalid response", details: text.slice(0, 100) });
+    if (!response.ok || !contentType.includes("application/json")) {
+      const text = await response.text();
+      return res.status(500).json({
+        error: "Unexpected response",
+        details: text.slice(0, 200),
+      });
     }
 
-    const data = await resp.json();
+    const data = await response.json();
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.status(200).json(data.result?.winners ?? []);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(200).json(data.result?.winners ?? []);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 }
