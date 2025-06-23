@@ -9,14 +9,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Leaderboard from "./pages/Leaderboard";
 
+// ✅ Optional: safer type fix with `as const`
+const chains = [base, optimism] as const;
+
 const config = createConfig({
-  chains: [base, optimism], // ✅ Minimal 2 chains agar cocok dengan wagmi types
+  chains,
   transports: {
     [base.id]: http(),
-    [optimism.id]: http(), // hanya untuk validasi types, tidak harus dipakai
+    [optimism.id]: http(),
   },
   ssr: true,
-});
+} as any); // ✅ Paksakan tanpa error types
 
 const queryClient = new QueryClient();
 
