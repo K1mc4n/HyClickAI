@@ -13,14 +13,14 @@
     "@duneanalytics/client-sdk": "^0.2.5",
     "@farcaster/frame-sdk": "latest",
     "@farcaster/frame-wagmi-connector": "latest",
-    "@tanstack/react-query": "5.45.1",
+    "@tanstack/react-query": "^5.45.1",
     "axios": "^1.10.0",
     "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.14.2",
-    "viem": "latest",
-    "wagmi": "latest"
+    "viem": "^2.31.4",
+    "wagmi": "^2.15.6"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.0",
