@@ -9,17 +9,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Leaderboard from "./pages/Leaderboard";
 
-// ✅ Optional: safer type fix with `as const`
-const chains = [base, optimism] as const;
-
 const config = createConfig({
-  chains,
+  chains: [base, optimism],
   transports: {
     [base.id]: http(),
     [optimism.id]: http(),
   },
   ssr: true,
-} as any); // ✅ Paksakan tanpa error types
+} as any); // ✅ Paksakan wagmi diam dengan cast 'as any'
 
 const queryClient = new QueryClient();
 
