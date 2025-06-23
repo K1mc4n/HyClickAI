@@ -4,15 +4,16 @@ import App from "./App";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { base } from "wagmi/chains";
+import { base, optimism } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Leaderboard from "./pages/Leaderboard";
 
 const config = createConfig({
-  chains: [base],
+  chains: [base, optimism], // ✅ Minimal 2 chains agar cocok dengan wagmi types
   transports: {
     [base.id]: http(),
+    [optimism.id]: http(), // hanya untuk validasi types, tidak harus dipakai
   },
   ssr: true,
 });
