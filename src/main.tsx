@@ -4,15 +4,15 @@ import App from "./App";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { mainnet } from "wagmi/chains";
+import { base } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Leaderboard from "./pages/Leaderboard";
 
 const config = createConfig({
-  chains: [mainnet],
+  chains: [base],
   transports: {
-    [mainnet.id]: http(),
+    [base.id]: http(),
   },
   ssr: true,
 });
