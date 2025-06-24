@@ -1,22 +1,22 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import App from "./App.tsx";
+import "./index.css";
 
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { base, optimism } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-import Leaderboard from "./pages/Leaderboard";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Leaderboard from "./Leaderboard.tsx";
 
 const config = createConfig({
-  chains: [base, optimism],
+  chains: [base, optimism] as const,
   transports: {
     [base.id]: http(),
     [optimism.id]: http(),
   },
   ssr: true,
-} as any);
+});
 
 const queryClient = new QueryClient();
 
